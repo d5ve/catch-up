@@ -3,7 +3,7 @@
   "cells": [
     {
       "type": "text",
-      "data": "<ul><li>Short URLs, each having what/where metadata.<br></li><li>One URL for setup, one for voting.</li><li>A date range.</li><li>A list of people, indicating Yes/No/Maybe for each date range.</li><li>A most popular date view.</li></ul><div><br></div>"
+      "data": "<ul><li>Short URLs,&nbsp;<a href=\"https://github.com/speps/go-hashids\">https://github.com/speps/go-hashids</a>&nbsp;perhaps</li><li>Each event having what/where metadata.<br></li><li>One URL for setup, one for voting.</li><li>A date range.</li><li>A list of people, indicating Yes/No/Maybe for each date range.</li><li>A most popular date view.</li></ul><div><br></div>"
     }
   ]
 }
