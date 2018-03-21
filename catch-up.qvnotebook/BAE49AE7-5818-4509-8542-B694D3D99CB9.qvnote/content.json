@@ -1,0 +1,9 @@
+{
+  "title": "Platform",
+  "cells": [
+    {
+      "type": "text",
+      "data": "<ul><li>golang webapp<br></li><li>Inside a docker container</li><li>Either mysql or SQLite (look at docker volumes for this)</li><li>Use sessions to keep track of people.</li><li>No logins or emails needed.</li></ul><div><br></div>"
+    }
+  ]
+}

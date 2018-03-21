@@ -1,0 +1,9 @@
+{
+  "title": "Screens",
+  "cells": [
+    {
+      "type": "text",
+      "data": "<ul><li>Homepage?</li><li>Create screen</li><li>Admin screen</li><li>Vote screen</li></ul>"
+    }
+  ]
+}
