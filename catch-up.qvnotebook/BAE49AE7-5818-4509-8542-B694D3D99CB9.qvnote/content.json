@@ -3,7 +3,11 @@
   "cells": [
     {
       "type": "text",
-      "data": "<ul><li>golang webapp<br></li><li>Inside a docker container</li><li>Either mysql or SQLite (look at docker volumes for this)</li><li>Use sessions to keep track of people.</li><li>No logins or emails needed.</li></ul><div><br></div>"
+      "data": "<ul><li>golang webapp using&nbsp;<a href=\"https://github.com/gin-gonic/gin\">https://github.com/gin-gonic/gin</a><br></li><li>Inside a docker container</li><li>Either mysql or SQLite (look at docker volumes for this)</li><li>Use sessions to keep track of people.</li><li>No logins or emails needed.</li></ul><div><br></div>"
+    },
+    {
+      "type": "text",
+      "data": "<a href=\"http://slides.com/akshaydeo/writing-web-apps-in-golang\">http://slides.com/akshaydeo/writing-web-apps-in-golang</a>&nbsp;looks like a useful high-level view of golang web apps<div><br></div>"
     }
   ]
 }
