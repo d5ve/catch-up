@@ -22,7 +22,13 @@
       "data": "# Install the ENV-aware arg-parsing replacement\ngo get github.com/namsral/flag"
     },
     {
-      "type": "text",
+      "type": "code",
+      "language": "sh",
+      "data": "# Install vim go setup\ngit clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go\nvi main.go\n:GoInstallBinaries"
+    },
+    {
+      "type": "code",
+      "language": "sh",
       "data": ""
     }
   ]
