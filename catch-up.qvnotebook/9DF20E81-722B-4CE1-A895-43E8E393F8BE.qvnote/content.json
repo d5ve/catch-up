@@ -3,7 +3,7 @@
   "cells": [
     {
       "type": "text",
-      "data": "<ul><li>Homepage?</li><li>Create screen</li><li>Admin screen</li><li>Vote screen</li></ul>"
+      "data": "<ul><li>Homepage? Maybe just serve the create scree.</li><li>Create screen. &lt;form&gt; for the basic metadata that POSTs back to itself, then redirects to admin screen.</li><li>Admin screen. Show same &lt;form&gt; as create screen, and allow editing the existing catch-up plan.</li><li>Vote screen. People can indicate their availablity for each date/time. Yes/No/Maybe.</li></ul>"
     }
   ]
 }
