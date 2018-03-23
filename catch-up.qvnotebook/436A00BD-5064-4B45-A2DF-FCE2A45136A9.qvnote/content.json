@@ -1,0 +1,20 @@
+{
+  "title": "Commands",
+  "cells": [
+    {
+      "type": "code",
+      "language": "sh",
+      "data": "# Istall gin-gonic\ngo get github.com/gin-gonic/gin"
+    },
+    {
+      "type": "code",
+      "language": "sh",
+      "data": "# Install SQLite3 drivers.\ngo get github.com/mattn/go-sqlite3"
+    },
+    {
+      "type": "code",
+      "language": "sh",
+      "data": "# Install gin live restarter\ngo get github.com/codegangsta/gin\ngin run main.go"
+    }
+  ]
+}
