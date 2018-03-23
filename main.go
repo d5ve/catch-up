@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"database/sql"
-	"github.com/namsral/flag"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/namsral/flag"
 	"log"
 	//"os"
 )
