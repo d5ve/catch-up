@@ -15,6 +15,15 @@
       "type": "code",
       "language": "sh",
       "data": "# Install gin live restarter\ngo get github.com/codegangsta/gin\ngin run main.go"
+    },
+    {
+      "type": "code",
+      "language": "sh",
+      "data": "# Install the ENV-aware arg-parsing replacement\ngo get github.com/namsral/flag"
+    },
+    {
+      "type": "text",
+      "data": ""
     }
   ]
 }
