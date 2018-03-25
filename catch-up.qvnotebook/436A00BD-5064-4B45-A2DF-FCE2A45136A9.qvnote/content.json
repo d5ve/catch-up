@@ -29,7 +29,7 @@
     {
       "type": "code",
       "language": "sh",
-      "data": ""
+      "data": "# Install GORM\ngo get -u github.com/jinzhu/gorm "
     }
   ]
 }
