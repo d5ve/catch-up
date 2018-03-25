@@ -1,13 +1,20 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/namsral/flag"
-	"log"
-	//"os"
+	"time"
 )
+
+type CatchUp struct {
+	gorm.Model
+	Name      string
+	Details   string
+	StartDate time.Time
+	EndDate   time.Time
+}
 
 func main() {
 	fmt.Println("At top of main()")
@@ -17,9 +24,12 @@ func main() {
 	flag.Parse()
 	fmt.Println("port:", port)
 
-	db, err := sql.Open("sqlite3", "./catch-up.db")
+	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
-		log.Fatal(err)
+		panic("failed to connect database")
 	}
 	defer db.Close()
+
+	db.AutoMigrate(&CatchUp{})
+
 }
