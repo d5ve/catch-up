@@ -46,4 +46,12 @@ func main() {
 
 	db.AutoMigrate(&CatchUp{}, &Option{}, &Vote{})
 
+	c1 := CatchUp{
+		Name:      "First catchup",
+		Details:   "First attempt at a catchup record",
+		StartDate: time.Date(2018, time.March, 10, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2018, time.March, 17, 0, 0, 0, 0, time.UTC),
+	}
+
+	db.Create(&c1)
 }
