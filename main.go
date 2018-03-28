@@ -14,12 +14,20 @@ type CatchUp struct {
 	Details   string
 	StartDate time.Time
 	EndDate   time.Time
+	Options   []Option
 }
 
 type Option struct {
 	gorm.Model
-	CatchUp CatchUp
-	Date    time.Time
+	CatchUpID int
+	Date      time.Time
+	Votes     []Vote
+}
+
+type Vote struct {
+	gorm.Model
+	YNM    string `gorm:"size:1"`
+	person string
 }
 
 func main() {
@@ -36,6 +44,6 @@ func main() {
 	}
 	defer db.Close()
 
-	db.AutoMigrate(&CatchUp{}, &Option{})
+	db.AutoMigrate(&CatchUp{}, &Option{}, &Vote{})
 
 }
