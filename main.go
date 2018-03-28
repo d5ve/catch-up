@@ -16,6 +16,12 @@ type CatchUp struct {
 	EndDate   time.Time
 }
 
+type Option struct {
+	gorm.Model
+	CatchUp CatchUp
+	Date    time.Time
+}
+
 func main() {
 	fmt.Println("At top of main()")
 
@@ -30,6 +36,6 @@ func main() {
 	}
 	defer db.Close()
 
-	db.AutoMigrate(&CatchUp{})
+	db.AutoMigrate(&CatchUp{}, &Option{})
 
 }
