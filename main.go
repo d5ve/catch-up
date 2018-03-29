@@ -46,12 +46,40 @@ func main() {
 
 	db.AutoMigrate(&CatchUp{}, &Option{}, &Vote{})
 
+	// Mon Jan 2 15:04:05 -0700 MST 2006
+	d1 := "2018-03-10"
+	start_date, err := time.Parse("2006-01-02", d1)
+	if err != nil {
+		panic(fmt.Sprint("failed to parse ", d1))
+	}
+
+	d2 := "2018-03-17"
+	end_date, err := time.Parse("2006-01-02", d2)
+	if err != nil {
+		panic(fmt.Sprint("failed to parse ", d2))
+	}
+
+	options := getOptions(start_date, end_date)
+
 	c1 := CatchUp{
 		Name:      "First catchup",
 		Details:   "First attempt at a catchup record",
-		StartDate: time.Date(2018, time.March, 10, 0, 0, 0, 0, time.UTC),
-		EndDate:   time.Date(2018, time.March, 17, 0, 0, 0, 0, time.UTC),
+		StartDate: start_date,
+		EndDate:   end_date,
+		Options:   options,
 	}
 
 	db.Create(&c1)
+}
+
+func getOptions(StartDate time.Time, EndDate time.Time) []Option {
+	if StartDate.After(EndDate) {
+		StartDate, EndDate = EndDate, StartDate
+	}
+	var options []Option
+	for day := StartDate; day.Before(EndDate) || day.Equal(EndDate); day = day.AddDate(0, 0, 1) {
+		o := Option{Date: day}
+		options = append(options, o)
+	}
+	return options
 }
