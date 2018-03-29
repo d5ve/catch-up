@@ -72,11 +72,10 @@ func main() {
 	db.Create(&c1)
 }
 
-func getOptions(startDate time.Time, endDate time.Time) []Option {
+func getOptions(startDate time.Time, endDate time.Time) (options []Option) {
 	if startDate.After(endDate) {
 		startDate, endDate = endDate, startDate
 	}
-	var options []Option
 	for day := startDate; day.Before(endDate) || day.Equal(endDate); day = day.AddDate(0, 0, 1) {
 		o := Option{Date: day}
 		options = append(options, o)
