@@ -1,0 +1,8 @@
+#schema="catch_up"
+[mysql]
+    dbname="catch_up"
+    host="172.17.0.2"
+    port=3306
+    user="catch_up"
+    pass="catch_up_password"
+#    sslmode="true"
