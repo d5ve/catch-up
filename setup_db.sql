@@ -13,6 +13,7 @@ CREATE TABLE `catch_up` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- TODO: foreign key constraints.
 CREATE TABLE `option` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `catchup_id` int(11) NOT NULL,
@@ -22,6 +23,7 @@ CREATE TABLE `option` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- TODO: foreign key constraints.
 CREATE TABLE `vote` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `option_id` int(11) NOT NULL,
