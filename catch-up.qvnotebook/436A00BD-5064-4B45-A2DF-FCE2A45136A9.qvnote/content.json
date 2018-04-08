@@ -29,12 +29,7 @@
     {
       "type": "code",
       "language": "sh",
-      "data": "# Install GORM\ngo get -u github.com/jinzhu/gorm "
-    },
-    {
-      "type": "code",
-      "language": "sh",
-      "data": "# Install sqlboiler instead of GORM\n# No, wait! It doesn't yet support SQLite.\ngo get -u -t github.com/volatiletech/sqlboiler"
+      "data": "# Install sqlboiler\ngo get -u -t github.com/volatiletech/sqlboiler\ngo get github.com/satori/go.uuid\ngo get gopkg.in/volatiletech/null.v6"
     },
     {
       "type": "code",
@@ -49,7 +44,7 @@
     {
       "type": "code",
       "language": "sh",
-      "data": ""
+      "data": "# Build sqlboiler models\nsqlboiler mysql"
     }
   ]
 }
