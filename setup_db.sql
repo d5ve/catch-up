@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXIST catchup;
+CREATE DATABASE catch_up;
 
-USE catchup;
+USE catch_up;
 
 CREATE TABLE `catch_up` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -32,3 +32,5 @@ CREATE TABLE `vote` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE USER 'catch_up'@'%' IDENTIFIED BY 'catch_up_password';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES ON catch_up.* TO 'catch_up'@'%';
