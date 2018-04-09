@@ -24,7 +24,7 @@
     {
       "type": "code",
       "language": "sh",
-      "data": "# Install vim go setup\ngit clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go\nvi main.go\n:GoInstallBinaries"
+      "data": "# Install vim go setup\n# Pathogen...\ngit clone https://github.com/fatih/vim-go.git ~/.vim/bundle/vim-go\nvi main.go\n:GoInstallBinaries\n# "
     },
     {
       "type": "code",
@@ -39,7 +39,7 @@
     {
       "type": "code",
       "language": "sh",
-      "data": "# Start the mysqld container and connect a client.\ndocker run --name catch-up-mysql -e MYSQL_ROOT_PASSWORD=hunter2 -d --rm -p 3306:3306 mysql:5.7\ndocker run -it --link catch-up-mysql:mysql --rm mysql:5.7 \\\n    sh -c 'exec mysql -h\"$MYSQL_PORT_3306_TCP_ADDR\" -P\"$MYSQL_PORT_3306_TCP_PORT\" -uroot -p\"$MYSQL_ENV_MYSQL_ROOT_PASSWORD\"'\n# Paste in `setup_db.sql` to set up database, tables, and users."
+      "data": "# Start the mysqld container and connect a client.\ndocker run --name catch-up-mysql -e MYSQL_ROOT_PASSWORD=hunter2 -d --rm -p 3306:3306 mysql:5.7\ndocker run -it --link catch-up-mysql:mysql --rm mysql:5.7 \\\n    sh -c 'exec mysql -h\"$MYSQL_PORT_3306_TCP_ADDR\" -P\"$MYSQL_PORT_3306_TCP_PORT\" -uroot -p\"$MYSQL_ENV_MYSQL_ROOT_PASSWORD\"'\n# Paste in `setup_db.sql` to set up database, tables, and users.\n# Then exit and reconnect as the app user.\ndocker run -it --link catch-up-mysql:mysql --rm mysql:5.7 \\\n    sh -c 'exec mysql -h\"$MYSQL_PORT_3306_TCP_ADDR\" -P\"$MYSQL_PORT_3306_TCP_PORT\" -ucatch_up -p\"catch_up_password\" catch_up'"
     },
     {
       "type": "code",
