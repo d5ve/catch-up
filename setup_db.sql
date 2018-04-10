@@ -27,7 +27,6 @@ CREATE TABLE `option` (
     FOREIGN KEY (`catch_up_id`) REFERENCES catch_up (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- TODO: foreign key constraints.
 CREATE TABLE `vote` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `option_id` int(11) NOT NULL,
