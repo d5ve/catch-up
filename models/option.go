@@ -22,7 +22,7 @@ import (
 // Option is an object representing the database table.
 type Option struct {
 	ID        int       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	CatchupID int       `boil:"catchup_id" json:"catchup_id" toml:"catchup_id" yaml:"catchup_id"`
+	CatchUpID int       `boil:"catch_up_id" json:"catch_up_id" toml:"catch_up_id" yaml:"catch_up_id"`
 	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 	Date      time.Time `boil:"date" json:"date" toml:"date" yaml:"date"`
@@ -33,13 +33,13 @@ type Option struct {
 
 var OptionColumns = struct {
 	ID        string
-	CatchupID string
+	CatchUpID string
 	CreatedAt string
 	UpdatedAt string
 	Date      string
 }{
 	ID:        "id",
-	CatchupID: "catchup_id",
+	CatchUpID: "catch_up_id",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
 	Date:      "date",
@@ -47,14 +47,16 @@ var OptionColumns = struct {
 
 // optionR is where relationships are stored.
 type optionR struct {
+	CatchUp *CatchUp
+	Votes   VoteSlice
 }
 
 // optionL is where Load methods for each relationship are stored.
 type optionL struct{}
 
 var (
-	optionColumns               = []string{"id", "catchup_id", "created_at", "updated_at", "date"}
-	optionColumnsWithoutDefault = []string{"catchup_id", "created_at", "updated_at", "date"}
+	optionColumns               = []string{"id", "catch_up_id", "created_at", "updated_at", "date"}
+	optionColumnsWithoutDefault = []string{"catch_up_id", "created_at", "updated_at", "date"}
 	optionColumnsWithDefault    = []string{"id"}
 	optionPrimaryKeyColumns     = []string{"id"}
 )
@@ -333,6 +335,361 @@ func (q optionQuery) Exists() (bool, error) {
 	}
 
 	return count > 0, nil
+}
+
+// CatchUpG pointed to by the foreign key.
+func (o *Option) CatchUpG(mods ...qm.QueryMod) catchUpQuery {
+	return o.CatchUp(boil.GetDB(), mods...)
+}
+
+// CatchUp pointed to by the foreign key.
+func (o *Option) CatchUp(exec boil.Executor, mods ...qm.QueryMod) catchUpQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("id=?", o.CatchUpID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := CatchUps(exec, queryMods...)
+	queries.SetFrom(query.Query, "`catch_up`")
+
+	return query
+}
+
+// VotesG retrieves all the vote's vote.
+func (o *Option) VotesG(mods ...qm.QueryMod) voteQuery {
+	return o.Votes(boil.GetDB(), mods...)
+}
+
+// Votes retrieves all the vote's vote with an executor.
+func (o *Option) Votes(exec boil.Executor, mods ...qm.QueryMod) voteQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("`vote`.`option_id`=?", o.ID),
+	)
+
+	query := Votes(exec, queryMods...)
+	queries.SetFrom(query.Query, "`vote`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`vote`.*"})
+	}
+
+	return query
+}
+
+// LoadCatchUp allows an eager lookup of values, cached into the
+// loaded structs of the objects.
+func (optionL) LoadCatchUp(e boil.Executor, singular bool, maybeOption interface{}) error {
+	var slice []*Option
+	var object *Option
+
+	count := 1
+	if singular {
+		object = maybeOption.(*Option)
+	} else {
+		slice = *maybeOption.(*[]*Option)
+		count = len(slice)
+	}
+
+	args := make([]interface{}, count)
+	if singular {
+		if object.R == nil {
+			object.R = &optionR{}
+		}
+		args[0] = object.CatchUpID
+	} else {
+		for i, obj := range slice {
+			if obj.R == nil {
+				obj.R = &optionR{}
+			}
+			args[i] = obj.CatchUpID
+		}
+	}
+
+	query := fmt.Sprintf(
+		"select * from `catch_up` where `id` in (%s)",
+		strmangle.Placeholders(dialect.IndexPlaceholders, count, 1, 1),
+	)
+
+	if boil.DebugMode {
+		fmt.Fprintf(boil.DebugWriter, "%s\n%v\n", query, args)
+	}
+
+	results, err := e.Query(query, args...)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load CatchUp")
+	}
+	defer results.Close()
+
+	var resultSlice []*CatchUp
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice CatchUp")
+	}
+
+	if len(optionAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		object.R.CatchUp = resultSlice[0]
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.CatchUpID == foreign.ID {
+				local.R.CatchUp = foreign
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadVotes allows an eager lookup of values, cached into the
+// loaded structs of the objects.
+func (optionL) LoadVotes(e boil.Executor, singular bool, maybeOption interface{}) error {
+	var slice []*Option
+	var object *Option
+
+	count := 1
+	if singular {
+		object = maybeOption.(*Option)
+	} else {
+		slice = *maybeOption.(*[]*Option)
+		count = len(slice)
+	}
+
+	args := make([]interface{}, count)
+	if singular {
+		if object.R == nil {
+			object.R = &optionR{}
+		}
+		args[0] = object.ID
+	} else {
+		for i, obj := range slice {
+			if obj.R == nil {
+				obj.R = &optionR{}
+			}
+			args[i] = obj.ID
+		}
+	}
+
+	query := fmt.Sprintf(
+		"select * from `vote` where `option_id` in (%s)",
+		strmangle.Placeholders(dialect.IndexPlaceholders, count, 1, 1),
+	)
+	if boil.DebugMode {
+		fmt.Fprintf(boil.DebugWriter, "%s\n%v\n", query, args)
+	}
+
+	results, err := e.Query(query, args...)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load vote")
+	}
+	defer results.Close()
+
+	var resultSlice []*Vote
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice vote")
+	}
+
+	if len(voteAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Votes = resultSlice
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.OptionID {
+				local.R.Votes = append(local.R.Votes, foreign)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// SetCatchUpG of the option to the related item.
+// Sets o.R.CatchUp to related.
+// Adds o to related.R.Options.
+// Uses the global database handle.
+func (o *Option) SetCatchUpG(insert bool, related *CatchUp) error {
+	return o.SetCatchUp(boil.GetDB(), insert, related)
+}
+
+// SetCatchUpP of the option to the related item.
+// Sets o.R.CatchUp to related.
+// Adds o to related.R.Options.
+// Panics on error.
+func (o *Option) SetCatchUpP(exec boil.Executor, insert bool, related *CatchUp) {
+	if err := o.SetCatchUp(exec, insert, related); err != nil {
+		panic(boil.WrapErr(err))
+	}
+}
+
+// SetCatchUpGP of the option to the related item.
+// Sets o.R.CatchUp to related.
+// Adds o to related.R.Options.
+// Uses the global database handle and panics on error.
+func (o *Option) SetCatchUpGP(insert bool, related *CatchUp) {
+	if err := o.SetCatchUp(boil.GetDB(), insert, related); err != nil {
+		panic(boil.WrapErr(err))
+	}
+}
+
+// SetCatchUp of the option to the related item.
+// Sets o.R.CatchUp to related.
+// Adds o to related.R.Options.
+func (o *Option) SetCatchUp(exec boil.Executor, insert bool, related *CatchUp) error {
+	var err error
+	if insert {
+		if err = related.Insert(exec); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE `option` SET %s WHERE %s",
+		strmangle.SetParamNames("`", "`", 0, []string{"catch_up_id"}),
+		strmangle.WhereClause("`", "`", 0, optionPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.DebugMode {
+		fmt.Fprintln(boil.DebugWriter, updateQuery)
+		fmt.Fprintln(boil.DebugWriter, values)
+	}
+
+	if _, err = exec.Exec(updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.CatchUpID = related.ID
+
+	if o.R == nil {
+		o.R = &optionR{
+			CatchUp: related,
+		}
+	} else {
+		o.R.CatchUp = related
+	}
+
+	if related.R == nil {
+		related.R = &catchUpR{
+			Options: OptionSlice{o},
+		}
+	} else {
+		related.R.Options = append(related.R.Options, o)
+	}
+
+	return nil
+}
+
+// AddVotesG adds the given related objects to the existing relationships
+// of the option, optionally inserting them as new records.
+// Appends related to o.R.Votes.
+// Sets related.R.Option appropriately.
+// Uses the global database handle.
+func (o *Option) AddVotesG(insert bool, related ...*Vote) error {
+	return o.AddVotes(boil.GetDB(), insert, related...)
+}
+
+// AddVotesP adds the given related objects to the existing relationships
+// of the option, optionally inserting them as new records.
+// Appends related to o.R.Votes.
+// Sets related.R.Option appropriately.
+// Panics on error.
+func (o *Option) AddVotesP(exec boil.Executor, insert bool, related ...*Vote) {
+	if err := o.AddVotes(exec, insert, related...); err != nil {
+		panic(boil.WrapErr(err))
+	}
+}
+
+// AddVotesGP adds the given related objects to the existing relationships
+// of the option, optionally inserting them as new records.
+// Appends related to o.R.Votes.
+// Sets related.R.Option appropriately.
+// Uses the global database handle and panics on error.
+func (o *Option) AddVotesGP(insert bool, related ...*Vote) {
+	if err := o.AddVotes(boil.GetDB(), insert, related...); err != nil {
+		panic(boil.WrapErr(err))
+	}
+}
+
+// AddVotes adds the given related objects to the existing relationships
+// of the option, optionally inserting them as new records.
+// Appends related to o.R.Votes.
+// Sets related.R.Option appropriately.
+func (o *Option) AddVotes(exec boil.Executor, insert bool, related ...*Vote) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.OptionID = o.ID
+			if err = rel.Insert(exec); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `vote` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"option_id"}),
+				strmangle.WhereClause("`", "`", 0, votePrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.DebugMode {
+				fmt.Fprintln(boil.DebugWriter, updateQuery)
+				fmt.Fprintln(boil.DebugWriter, values)
+			}
+
+			if _, err = exec.Exec(updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.OptionID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &optionR{
+			Votes: related,
+		}
+	} else {
+		o.R.Votes = append(o.R.Votes, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &voteR{
+				Option: o,
+			}
+		} else {
+			rel.R.Option = o
+		}
+	}
+	return nil
 }
 
 // OptionsG retrieves all records.

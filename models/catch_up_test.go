@@ -462,6 +462,153 @@ func testCatchUpsInsertWhitelist(t *testing.T) {
 	}
 }
 
+func testCatchUpToManyOptions(t *testing.T) {
+	var err error
+	tx := MustTx(boil.Begin())
+	defer tx.Rollback()
+
+	var a CatchUp
+	var b, c Option
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, catchUpDBTypes, true, catchUpColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize CatchUp struct: %s", err)
+	}
+
+	if err := a.Insert(tx); err != nil {
+		t.Fatal(err)
+	}
+
+	randomize.Struct(seed, &b, optionDBTypes, false, optionColumnsWithDefault...)
+	randomize.Struct(seed, &c, optionDBTypes, false, optionColumnsWithDefault...)
+
+	b.CatchUpID = a.ID
+	c.CatchUpID = a.ID
+	if err = b.Insert(tx); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(tx); err != nil {
+		t.Fatal(err)
+	}
+
+	option, err := a.Options(tx).All()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	bFound, cFound := false, false
+	for _, v := range option {
+		if v.CatchUpID == b.CatchUpID {
+			bFound = true
+		}
+		if v.CatchUpID == c.CatchUpID {
+			cFound = true
+		}
+	}
+
+	if !bFound {
+		t.Error("expected to find b")
+	}
+	if !cFound {
+		t.Error("expected to find c")
+	}
+
+	slice := CatchUpSlice{&a}
+	if err = a.L.LoadOptions(tx, false, (*[]*CatchUp)(&slice)); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Options); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	a.R.Options = nil
+	if err = a.L.LoadOptions(tx, true, &a); err != nil {
+		t.Fatal(err)
+	}
+	if got := len(a.R.Options); got != 2 {
+		t.Error("number of eager loaded records wrong, got:", got)
+	}
+
+	if t.Failed() {
+		t.Logf("%#v", option)
+	}
+}
+
+func testCatchUpToManyAddOpOptions(t *testing.T) {
+	var err error
+
+	tx := MustTx(boil.Begin())
+	defer tx.Rollback()
+
+	var a CatchUp
+	var b, c, d, e Option
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, catchUpDBTypes, false, strmangle.SetComplement(catchUpPrimaryKeyColumns, catchUpColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	foreigners := []*Option{&b, &c, &d, &e}
+	for _, x := range foreigners {
+		if err = randomize.Struct(seed, x, optionDBTypes, false, strmangle.SetComplement(optionPrimaryKeyColumns, optionColumnsWithoutDefault)...); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := a.Insert(tx); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(tx); err != nil {
+		t.Fatal(err)
+	}
+	if err = c.Insert(tx); err != nil {
+		t.Fatal(err)
+	}
+
+	foreignersSplitByInsertion := [][]*Option{
+		{&b, &c},
+		{&d, &e},
+	}
+
+	for i, x := range foreignersSplitByInsertion {
+		err = a.AddOptions(tx, i != 0, x...)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		first := x[0]
+		second := x[1]
+
+		if a.ID != first.CatchUpID {
+			t.Error("foreign key was wrong value", a.ID, first.CatchUpID)
+		}
+		if a.ID != second.CatchUpID {
+			t.Error("foreign key was wrong value", a.ID, second.CatchUpID)
+		}
+
+		if first.R.CatchUp != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+		if second.R.CatchUp != &a {
+			t.Error("relationship was not added properly to the foreign slice")
+		}
+
+		if a.R.Options[i*2] != first {
+			t.Error("relationship struct slice not set to correct value")
+		}
+		if a.R.Options[i*2+1] != second {
+			t.Error("relationship struct slice not set to correct value")
+		}
+
+		count, err := a.Options(tx).Count()
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want := int64((i + 1) * 2); count != want {
+			t.Error("want", want, "got", count)
+		}
+	}
+}
+
 func testCatchUpsReload(t *testing.T) {
 	t.Parallel()
 

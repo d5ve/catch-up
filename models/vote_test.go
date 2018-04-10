@@ -462,6 +462,112 @@ func testVotesInsertWhitelist(t *testing.T) {
 	}
 }
 
+func testVoteToOneOptionUsingOption(t *testing.T) {
+	tx := MustTx(boil.Begin())
+	defer tx.Rollback()
+
+	var local Vote
+	var foreign Option
+
+	seed := randomize.NewSeed()
+	if err := randomize.Struct(seed, &local, voteDBTypes, false, voteColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Vote struct: %s", err)
+	}
+	if err := randomize.Struct(seed, &foreign, optionDBTypes, false, optionColumnsWithDefault...); err != nil {
+		t.Errorf("Unable to randomize Option struct: %s", err)
+	}
+
+	if err := foreign.Insert(tx); err != nil {
+		t.Fatal(err)
+	}
+
+	local.OptionID = foreign.ID
+	if err := local.Insert(tx); err != nil {
+		t.Fatal(err)
+	}
+
+	check, err := local.Option(tx).One()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if check.ID != foreign.ID {
+		t.Errorf("want: %v, got %v", foreign.ID, check.ID)
+	}
+
+	slice := VoteSlice{&local}
+	if err = local.L.LoadOption(tx, false, (*[]*Vote)(&slice)); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Option == nil {
+		t.Error("struct should have been eager loaded")
+	}
+
+	local.R.Option = nil
+	if err = local.L.LoadOption(tx, true, &local); err != nil {
+		t.Fatal(err)
+	}
+	if local.R.Option == nil {
+		t.Error("struct should have been eager loaded")
+	}
+}
+
+func testVoteToOneSetOpOptionUsingOption(t *testing.T) {
+	var err error
+
+	tx := MustTx(boil.Begin())
+	defer tx.Rollback()
+
+	var a Vote
+	var b, c Option
+
+	seed := randomize.NewSeed()
+	if err = randomize.Struct(seed, &a, voteDBTypes, false, strmangle.SetComplement(votePrimaryKeyColumns, voteColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &b, optionDBTypes, false, strmangle.SetComplement(optionPrimaryKeyColumns, optionColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+	if err = randomize.Struct(seed, &c, optionDBTypes, false, strmangle.SetComplement(optionPrimaryKeyColumns, optionColumnsWithoutDefault)...); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := a.Insert(tx); err != nil {
+		t.Fatal(err)
+	}
+	if err = b.Insert(tx); err != nil {
+		t.Fatal(err)
+	}
+
+	for i, x := range []*Option{&b, &c} {
+		err = a.SetOption(tx, i != 0, x)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if a.R.Option != x {
+			t.Error("relationship struct not set to correct value")
+		}
+
+		if x.R.Votes[0] != &a {
+			t.Error("failed to append to foreign relationship struct")
+		}
+		if a.OptionID != x.ID {
+			t.Error("foreign key was wrong value", a.OptionID)
+		}
+
+		zero := reflect.Zero(reflect.TypeOf(a.OptionID))
+		reflect.Indirect(reflect.ValueOf(&a.OptionID)).Set(zero)
+
+		if err = a.Reload(tx); err != nil {
+			t.Fatal("failed to reload", err)
+		}
+
+		if a.OptionID != x.ID {
+			t.Error("foreign key was wrong value", a.OptionID, x.ID)
+		}
+	}
+}
 func testVotesReload(t *testing.T) {
 	t.Parallel()
 

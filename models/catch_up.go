@@ -53,6 +53,7 @@ var CatchUpColumns = struct {
 
 // catchUpR is where relationships are stored.
 type catchUpR struct {
+	Options OptionSlice
 }
 
 // catchUpL is where Load methods for each relationship are stored.
@@ -339,6 +340,188 @@ func (q catchUpQuery) Exists() (bool, error) {
 	}
 
 	return count > 0, nil
+}
+
+// OptionsG retrieves all the option's option.
+func (o *CatchUp) OptionsG(mods ...qm.QueryMod) optionQuery {
+	return o.Options(boil.GetDB(), mods...)
+}
+
+// Options retrieves all the option's option with an executor.
+func (o *CatchUp) Options(exec boil.Executor, mods ...qm.QueryMod) optionQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("`option`.`catch_up_id`=?", o.ID),
+	)
+
+	query := Options(exec, queryMods...)
+	queries.SetFrom(query.Query, "`option`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`option`.*"})
+	}
+
+	return query
+}
+
+// LoadOptions allows an eager lookup of values, cached into the
+// loaded structs of the objects.
+func (catchUpL) LoadOptions(e boil.Executor, singular bool, maybeCatchUp interface{}) error {
+	var slice []*CatchUp
+	var object *CatchUp
+
+	count := 1
+	if singular {
+		object = maybeCatchUp.(*CatchUp)
+	} else {
+		slice = *maybeCatchUp.(*[]*CatchUp)
+		count = len(slice)
+	}
+
+	args := make([]interface{}, count)
+	if singular {
+		if object.R == nil {
+			object.R = &catchUpR{}
+		}
+		args[0] = object.ID
+	} else {
+		for i, obj := range slice {
+			if obj.R == nil {
+				obj.R = &catchUpR{}
+			}
+			args[i] = obj.ID
+		}
+	}
+
+	query := fmt.Sprintf(
+		"select * from `option` where `catch_up_id` in (%s)",
+		strmangle.Placeholders(dialect.IndexPlaceholders, count, 1, 1),
+	)
+	if boil.DebugMode {
+		fmt.Fprintf(boil.DebugWriter, "%s\n%v\n", query, args)
+	}
+
+	results, err := e.Query(query, args...)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load option")
+	}
+	defer results.Close()
+
+	var resultSlice []*Option
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice option")
+	}
+
+	if len(optionAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Options = resultSlice
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.CatchUpID {
+				local.R.Options = append(local.R.Options, foreign)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// AddOptionsG adds the given related objects to the existing relationships
+// of the catch_up, optionally inserting them as new records.
+// Appends related to o.R.Options.
+// Sets related.R.CatchUp appropriately.
+// Uses the global database handle.
+func (o *CatchUp) AddOptionsG(insert bool, related ...*Option) error {
+	return o.AddOptions(boil.GetDB(), insert, related...)
+}
+
+// AddOptionsP adds the given related objects to the existing relationships
+// of the catch_up, optionally inserting them as new records.
+// Appends related to o.R.Options.
+// Sets related.R.CatchUp appropriately.
+// Panics on error.
+func (o *CatchUp) AddOptionsP(exec boil.Executor, insert bool, related ...*Option) {
+	if err := o.AddOptions(exec, insert, related...); err != nil {
+		panic(boil.WrapErr(err))
+	}
+}
+
+// AddOptionsGP adds the given related objects to the existing relationships
+// of the catch_up, optionally inserting them as new records.
+// Appends related to o.R.Options.
+// Sets related.R.CatchUp appropriately.
+// Uses the global database handle and panics on error.
+func (o *CatchUp) AddOptionsGP(insert bool, related ...*Option) {
+	if err := o.AddOptions(boil.GetDB(), insert, related...); err != nil {
+		panic(boil.WrapErr(err))
+	}
+}
+
+// AddOptions adds the given related objects to the existing relationships
+// of the catch_up, optionally inserting them as new records.
+// Appends related to o.R.Options.
+// Sets related.R.CatchUp appropriately.
+func (o *CatchUp) AddOptions(exec boil.Executor, insert bool, related ...*Option) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.CatchUpID = o.ID
+			if err = rel.Insert(exec); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `option` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"catch_up_id"}),
+				strmangle.WhereClause("`", "`", 0, optionPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.DebugMode {
+				fmt.Fprintln(boil.DebugWriter, updateQuery)
+				fmt.Fprintln(boil.DebugWriter, values)
+			}
+
+			if _, err = exec.Exec(updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.CatchUpID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &catchUpR{
+			Options: related,
+		}
+	} else {
+		o.R.Options = append(o.R.Options, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &optionR{
+				CatchUp: o,
+			}
+		} else {
+			rel.R.CatchUp = o
+		}
+	}
+	return nil
 }
 
 // CatchUpsG retrieves all records.
