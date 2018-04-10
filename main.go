@@ -28,9 +28,6 @@ func main() {
 	}
 	log.Info("Got DB handle", "db", db)
 
-	catch_ups, err := models.CatchUps(db).All()
-	log.Info("Got CatchUps", "catch_ups", catch_ups)
-
 	// Mon Jan 2 15:04:05 -0700 MST 2006
 	d1 := "2018-03-10"
 	startDate, err := time.Parse("2006-01-02", d1)
@@ -48,6 +45,21 @@ func main() {
 
 	optionDates := getDates(startDate, endDate)
 	log.Info("Generated option dates", "dates", optionDates)
+
+	catch_up := models.CatchUp{
+		Name:      "My first catchup",
+		StartDate: startDate,
+		EndDate:   endDate,
+	}
+
+	err = catch_up.Insert(db)
+	if err != nil {
+		panic(fmt.Sprint("Failed to INSERT catch_up", err))
+	}
+
+	catch_ups, err := models.CatchUps(db).All()
+	log.Info("Got CatchUps", "catch_ups", catch_ups)
+
 }
 
 func getDates(startDate time.Time, endDate time.Time) (optionDates []time.Time) {
