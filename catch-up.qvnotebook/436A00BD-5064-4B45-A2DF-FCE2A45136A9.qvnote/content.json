@@ -29,7 +29,7 @@
     {
       "type": "code",
       "language": "sh",
-      "data": "# Install sqlboiler\ngo get -u -t github.com/volatiletech/sqlboiler\ngo get github.com/satori/go.uuid\ngo get gopkg.in/volatiletech/null.v6"
+      "data": "# Install sqlboiler\ngo get -u -t github.com/volatiletech/sqlboiler\ngo get github.com/satori/go.uuid\ngo get gopkg.in/volatiletech/null.v6\ngo get gopkg.in/inconshreveable/log15.v2"
     },
     {
       "type": "code",
