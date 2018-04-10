@@ -45,30 +45,17 @@ func main() {
 		panic(fmt.Sprint("failed to parse ", d2))
 	}
 	log.Info("Parsed endDate", "endDate", endDate)
-	/*
-		options := getOptions(startDate, endDate)
 
-		c1 := CatchUp{
-			Name:      "First catchup",
-			Details:   "First attempt at a catchup record",
-			StartDate: startDate,
-			EndDate:   endDate,
-			Options:   options,
-		}
-
-		db.Create(&c1)
-	*/
+	optionDates := getDates(startDate, endDate)
+	log.Info("Generated option dates", "dates", optionDates)
 }
 
-/*
-func getOptions(startDate time.Time, endDate time.Time) (options []Option) {
+func getDates(startDate time.Time, endDate time.Time) (optionDates []time.Time) {
 	if startDate.After(endDate) {
 		startDate, endDate = endDate, startDate
 	}
 	for day := startDate; day.Before(endDate) || day.Equal(endDate); day = day.AddDate(0, 0, 1) {
-		o := Option{Date: day}
-		options = append(options, o)
+		optionDates = append(optionDates, day)
 	}
-	return options
+	return optionDates
 }
-*/
