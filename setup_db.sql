@@ -1,4 +1,3 @@
-START TRANSACTION;
 
 DROP DATABASE catch_up;
 
@@ -38,7 +37,4 @@ CREATE TABLE `vote` (
     FOREIGN KEY (`option_id`) REFERENCES `option` (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE USER 'catch_up'@'%' IDENTIFIED BY 'catch_up_password';
-GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES ON catch_up.* TO 'catch_up'@'%';
-
-COMMIT;
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES ON catch_up.* TO 'catch_up'@'%' IDENTIFIED BY 'catch_up_password';
