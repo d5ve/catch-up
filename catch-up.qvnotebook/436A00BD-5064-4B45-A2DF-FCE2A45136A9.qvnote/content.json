@@ -45,6 +45,11 @@
       "type": "code",
       "language": "sh",
       "data": "# Build sqlboiler models\nsqlboiler mysql --wipe"
+    },
+    {
+      "type": "code",
+      "language": "sh",
+      "data": "# go-spew for debug pretty-printing\ngo get -u github.com/davecgh/go-spew/spew"
     }
   ]
 }
