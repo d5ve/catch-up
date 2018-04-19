@@ -1,5 +1,5 @@
 
-DROP DATABASE catch_up;
+DROP DATABASE IF EXISTS catch_up;
 
 CREATE DATABASE catch_up;
 
