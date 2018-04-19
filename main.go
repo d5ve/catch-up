@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/d5ve/catch-up/models"
+	"github.com/davecgh/go-spew/spew"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/namsral/flag"
 	"gopkg.in/inconshreveable/log15.v2"
@@ -57,8 +58,19 @@ func main() {
 		panic(fmt.Sprint("Failed to INSERT catch_up", err))
 	}
 
+	for _, oDate := range optionDates {
+		option := models.Option{
+			CatchUpID: catch_up.ID,
+			Date:      oDate,
+		}
+		err := option.Insert(db)
+		if err != nil {
+			panic(fmt.Sprint("Failed to INSERT option", err))
+		}
+	}
+
 	catch_ups, err := models.CatchUps(db).All()
-	log.Info("Got CatchUps", "catch_ups", catch_ups)
+	log.Info("Got CatchUps", "catch_ups", spew.Sdump(catch_ups))
 
 }
 
