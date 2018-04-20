@@ -72,6 +72,9 @@ func main() {
 	catch_ups, err := models.CatchUps(db).All()
 	log.Info("Got CatchUps", "catch_ups", spew.Sdump(catch_ups))
 
+	options, err := models.Options(db).All()
+	log.Info("Got CatchUps", "options", spew.Sdump(options))
+
 }
 
 func getDates(startDate time.Time, endDate time.Time) (optionDates []time.Time) {
