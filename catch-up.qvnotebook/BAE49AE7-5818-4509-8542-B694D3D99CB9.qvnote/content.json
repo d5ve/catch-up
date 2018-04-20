@@ -7,7 +7,7 @@
     },
     {
       "type": "text",
-      "data": "<a href=\"http://slides.com/akshaydeo/writing-web-apps-in-golang\">http://slides.com/akshaydeo/writing-web-apps-in-golang</a>&nbsp;looks like a useful high-level view of golang web apps<div><br></div><div><a href=\"https://www.gitbook.com/book/astaxie/build-web-application-with-golang/details\">https://www.gitbook.com/book/astaxie/build-web-application-with-golang/details</a><br></div>"
+      "data": "<a href=\"http://slides.com/akshaydeo/writing-web-apps-in-golang\">http://slides.com/akshaydeo/writing-web-apps-in-golang</a>&nbsp;looks like a useful high-level view of golang web apps<div><br></div><div><a href=\"https://www.gitbook.com/book/astaxie/build-web-application-with-golang/details\">https://www.gitbook.com/book/astaxie/build-web-application-with-golang/details</a><br></div><div><br></div><div><a href=\"https://github.com/oalders/go-for-perl-hackers\">https://github.com/oalders/go-for-perl-hackers</a><br></div>"
     }
   ]
 }
