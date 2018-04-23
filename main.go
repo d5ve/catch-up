@@ -29,6 +29,9 @@ func main() {
 	}
 	log.Info("Got DB handle", "db", db)
 
+}
+
+func createCatchup(db *sql.DB) {
 	// Mon Jan 2 15:04:05 -0700 MST 2006
 	d1 := "2018-03-10"
 	startDate, err := time.Parse("2006-01-02", d1)
