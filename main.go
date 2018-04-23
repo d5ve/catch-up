@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/d5ve/catch-up/models"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/namsral/flag"
 	"gopkg.in/inconshreveable/log15.v2"
@@ -29,6 +30,9 @@ func main() {
 	}
 	log.Info("Got DB handle", "db", db)
 
+	router := gin.Default()
+	router.GET("/new", func(c *gin.Context, db) {})
+	router.POST("/new", func(c *gin.Context, db) {})
 }
 
 func createCatchup(db *sql.DB) {
