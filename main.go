@@ -31,8 +31,12 @@ func main() {
 	log.Info("Got DB handle", "db", db)
 
 	router := gin.Default()
-	router.GET("/new", func(c *gin.Context, db) {})
-	router.POST("/new", func(c *gin.Context, db) {})
+	router.GET("/new", func(c *gin.Context) {})
+	router.POST("/new", func(c *gin.Context) {})
+	router.GET("/edit", func(c *gin.Context) {})
+	router.POST("/edit", func(c *gin.Context) {})
+	router.GET("/vote", func(c *gin.Context) {})
+	router.POST("/vote", func(c *gin.Context) {})
 }
 
 func createCatchup(db *sql.DB) {
