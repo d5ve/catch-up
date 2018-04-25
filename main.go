@@ -16,27 +16,33 @@ import (
 
 var log = log15.New()
 
-func main() {
-	log.Info("At top of main()")
+type Env struct {
+	db *sql.DB
+}
 
-	var port int
-	flag.IntVar(&port, "port", 3000, "webservice port")
-	flag.Parse()
-	log.Info("Got port", "port", port)
+func (e *Env) getNew(c *gin.Context)  { log.Info("Got DB handle", "db", e.db) }
+func (e *Env) postNew(c *gin.Context) {}
 
-	db, err := sql.Open("mysql", "catch_up:catch_up_password@tcp(0.0.0.0:3306)/catch_up?parseTime=true")
-	if err != nil {
-		panic(err.Error())
-	}
-	log.Info("Got DB handle", "db", db)
+func (e *Env) getEdit(c *gin.Context)  {}
+func (e *Env) postEdit(c *gin.Context) {}
+
+func (e *Env) getVote(c *gin.Context)  {}
+func (e *Env) postVote(c *gin.Context) {}
+
+func setupRouter(db *sql.DB) *gin.Engine {
+
+	env := &Env{db: db}
 
 	router := gin.Default()
-	router.GET("/new", func(c *gin.Context) {})
-	router.POST("/new", func(c *gin.Context) {})
-	router.GET("/edit", func(c *gin.Context) {})
-	router.POST("/edit", func(c *gin.Context) {})
-	router.GET("/vote", func(c *gin.Context) {})
-	router.POST("/vote", func(c *gin.Context) {})
+
+	router.GET("/new", env.getNew)
+	router.POST("/new", env.postNew)
+	router.GET("/edit", env.getEdit)
+	router.POST("/edit", env.postEdit)
+	router.GET("/vote", env.getVote)
+	router.POST("/vote", env.postVote)
+
+	return router
 }
 
 func createCatchup(db *sql.DB) {
@@ -96,4 +102,24 @@ func getDates(startDate time.Time, endDate time.Time) (optionDates []time.Time) 
 		optionDates = append(optionDates, day)
 	}
 	return optionDates
+}
+
+func main() {
+	log.Info("At top of main()")
+
+	var port int
+	flag.IntVar(&port, "port", 3000, "webservice port")
+	flag.Parse()
+	log.Info("Got port", "port", port)
+
+	db, err := sql.Open("mysql", "catch_up:catch_up_password@tcp(0.0.0.0:3306)/catch_up?parseTime=true")
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Info("Got DB handle", "db", db)
+
+	router := setupRouter(db)
+	log.Info("Got router", "router", router)
+
+	//router.Run(fmt.Sprintf(":%d", port))
 }
