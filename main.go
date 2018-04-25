@@ -20,14 +20,14 @@ type Env struct {
 	db *sql.DB
 }
 
-func (e *Env) getNew(c *gin.Context)  { log.Info("Got DB handle", "db", e.db) }
-func (e *Env) postNew(c *gin.Context) {}
+func (env *Env) getNew(c *gin.Context)  { log.Info("Got DB handle", "db", env.db) }
+func (env *Env) postNew(c *gin.Context) {}
 
-func (e *Env) getEdit(c *gin.Context)  {}
-func (e *Env) postEdit(c *gin.Context) {}
+func (env *Env) getEdit(c *gin.Context)  {}
+func (env *Env) postEdit(c *gin.Context) {}
 
-func (e *Env) getVote(c *gin.Context)  {}
-func (e *Env) postVote(c *gin.Context) {}
+func (env *Env) getVote(c *gin.Context)  {}
+func (env *Env) postVote(c *gin.Context) {}
 
 func setupRouter(db *sql.DB) *gin.Engine {
 
