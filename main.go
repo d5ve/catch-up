@@ -11,6 +11,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/namsral/flag"
 	"gopkg.in/inconshreveable/log15.v2"
+	"net/http"
 	"time"
 )
 
@@ -20,7 +21,17 @@ type Env struct {
 	db *sql.DB
 }
 
-func (env *Env) getNew(c *gin.Context)  { log.Info("Got DB handle", "db", env.db) }
+func (env *Env) getNew(c *gin.Context) {
+	log.Info("Got DB handle", "db", env.db)
+	c.HTML(
+		http.StatusOK,
+		"new.html",
+		gin.H{
+			"title": "New catchup",
+		},
+	)
+}
+
 func (env *Env) postNew(c *gin.Context) {}
 
 func (env *Env) getEdit(c *gin.Context)  {}
@@ -41,6 +52,8 @@ func setupRouter(db *sql.DB) *gin.Engine {
 	router.POST("/edit", env.postEdit)
 	router.GET("/vote", env.getVote)
 	router.POST("/vote", env.postVote)
+
+	router.LoadHTMLGlob("templates/*")
 
 	return router
 }
@@ -121,5 +134,5 @@ func main() {
 	router := setupRouter(db)
 	log.Info("Got router", "router", router)
 
-	//router.Run(fmt.Sprintf(":%d", port))
+	router.Run(fmt.Sprintf(":%d", port))
 }
