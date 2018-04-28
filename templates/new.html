@@ -6,9 +6,9 @@
     <h1>New Catch-up</h1>
 
         <form action="/new" method="POST">
-            <li>Name: <input type="text" name="name"></li>
-            <li>Start day: <input type="text" name="start_day"></li>
-            <li>End day: <input type="text" name="end_day"></li>
+            <li>Name: <input type="text" name="name" value="{{ .name }}"></li>
+            <li>Start day: <input type="text" name="startDay" value="{{ .startDay }}"></li>
+            <li>End day: <input type="text" name="endDay" value="{{ .endDay }}"></li>
             <input type="submit">
         </form>
 <!--Embed the footer.html template at this location-->

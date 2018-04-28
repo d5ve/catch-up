@@ -20,7 +20,6 @@ func (env *Env) getIndex(c *gin.Context) {
 }
 
 func (env *Env) getNew(c *gin.Context) {
-	log.Info("Got DB handle", "db", env.db)
 	c.HTML(
 		http.StatusOK,
 		"new.html",
@@ -30,7 +29,10 @@ func (env *Env) getNew(c *gin.Context) {
 	)
 }
 
-func (env *Env) postNew(c *gin.Context) {}
+func (env *Env) postNew(c *gin.Context) {
+	log.Info("Got DB handle", "db", env.db)
+
+}
 
 func (env *Env) getEdit(c *gin.Context)  {}
 func (env *Env) postEdit(c *gin.Context) {}
