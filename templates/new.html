@@ -1,13 +1,15 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta name="generator" content="HTML Tidy for HTML5 for Apple macOS version 5.6.0" />
-        <meta charset="UTF-8" />
+<!--new.html-->
 
-        <title>
-            {{ .title }}
-        </title>
-    </head>
-    <body>
-    </body>
-</html>
+<!--Embed the header.html template at this location-->
+{{ template "header.html" .}}
+
+    <h1>New Catch-up</h1>
+
+        <form action="/new" method="POST">
+            <li>Name: <input type="text" name="name"></li>
+            <li>Start day: <input type="text" name="start_day"></li>
+            <li>End day: <input type="text" name="end_day"></li>
+            <input type="submit">
+        </form>
+<!--Embed the footer.html template at this location-->
+{{ template "footer.html" .}}

@@ -11,6 +11,14 @@ type Env struct {
 	db *sql.DB
 }
 
+func (env *Env) getIndex(c *gin.Context) {
+	c.HTML(
+		http.StatusOK,
+		"index.html",
+		gin.H{"title": "Catch-up"},
+	)
+}
+
 func (env *Env) getNew(c *gin.Context) {
 	log.Info("Got DB handle", "db", env.db)
 	c.HTML(
@@ -36,6 +44,7 @@ func setupRouter(db *sql.DB) *gin.Engine {
 
 	router := gin.Default()
 
+	router.GET("/", env.getIndex)
 	router.GET("/new", env.getNew)
 	router.POST("/new", env.postNew)
 	router.GET("/edit", env.getEdit)
@@ -43,7 +52,7 @@ func setupRouter(db *sql.DB) *gin.Engine {
 	router.GET("/vote", env.getVote)
 	router.POST("/vote", env.postVote)
 
-	router.LoadHTMLGlob("templates/*")
+	router.LoadHTMLGlob("templates/*.html")
 
 	return router
 }
