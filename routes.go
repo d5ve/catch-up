@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"net/http"
@@ -12,6 +13,9 @@ type Env struct {
 }
 
 func (env *Env) getIndex(c *gin.Context) {
+	session := sessions.Default(c)
+	session.Set("count", 1)
+	session.Save()
 	c.HTML(
 		http.StatusOK,
 		"index.html",
@@ -44,18 +48,21 @@ func setupRoutes(db *sql.DB) *gin.Engine {
 
 	env := &Env{db: db}
 
-	router := gin.Default()
+	routes := gin.Default()
 
-	router.GET("/", env.getIndex)
-	router.GET("/new", env.getNew)
-	router.POST("/new", env.postNew)
-	router.GET("/edit", env.getEdit)
-	router.POST("/edit", env.postEdit)
-	router.GET("/vote", env.getVote)
-	router.POST("/vote", env.postVote)
-	router.Static("/static", "./static")
+	store := sessions.NewCookieStore([]byte("3@ZN2@PDxLBEq#AH7wMAf%ij$U59U%Tg"))
+	routes.Use(sessions.Sessions("catch-up-session", store))
 
-	router.LoadHTMLGlob("templates/*.html")
+	routes.GET("/", env.getIndex)
+	routes.GET("/new", env.getNew)
+	routes.POST("/new", env.postNew)
+	routes.GET("/edit", env.getEdit)
+	routes.POST("/edit", env.postEdit)
+	routes.GET("/vote", env.getVote)
+	routes.POST("/vote", env.postVote)
+	routes.Static("/static", "./static")
 
-	return router
+	routes.LoadHTMLGlob("templates/*.html")
+
+	return routes
 }
