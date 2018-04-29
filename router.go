@@ -53,6 +53,7 @@ func setupRouter(db *sql.DB) *gin.Engine {
 	router.POST("/edit", env.postEdit)
 	router.GET("/vote", env.getVote)
 	router.POST("/vote", env.postVote)
+	router.Static("/static", "./static")
 
 	router.LoadHTMLGlob("templates/*.html")
 
