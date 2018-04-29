@@ -34,6 +34,11 @@
     {
       "type": "code",
       "language": "sh",
+      "data": "# Install session handler\ngo get github.com/gin-contrib/sessions"
+    },
+    {
+      "type": "code",
+      "language": "sh",
       "data": "# Grab the mysql 5.7 image.\ndocker pull mysql:5.7"
     },
     {
