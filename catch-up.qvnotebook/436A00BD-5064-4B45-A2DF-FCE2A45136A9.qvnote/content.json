@@ -14,7 +14,7 @@
     {
       "type": "code",
       "language": "sh",
-      "data": "# Install gin live restarter\ngo get github.com/codegangsta/gin\ngin run main.go"
+      "data": "# Install gin live restarter\ngo get github.com/codegangsta/gin\ngin --all run *.go"
     },
     {
       "type": "code",
