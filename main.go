@@ -26,8 +26,8 @@ func main() {
 	}
 	log.Info("Got DB handle", "db", db)
 
-	router := setupRouter(db)
-	log.Info("Got router", "router", router)
+	routes := setupRoutes(db)
+	log.Info("Got routes", "routes", routes)
 
-	router.Run(fmt.Sprintf(":%d", port))
+	routes.Run(fmt.Sprintf(":%d", port))
 }
