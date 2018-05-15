@@ -34,7 +34,7 @@
     {
       "type": "code",
       "language": "sh",
-      "data": "# Install session handler\ngo get github.com/gin-contrib/sessions"
+      "data": "# Install session handler\ngo get github.com/gin-contrib/sessions\ngo get github.com/gin-contrib/sessions/cookie"
     },
     {
       "type": "code",

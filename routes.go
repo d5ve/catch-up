@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"net/http"
@@ -50,7 +51,7 @@ func setupRoutes(db *sql.DB) *gin.Engine {
 
 	routes := gin.Default()
 
-	store := sessions.NewCookieStore([]byte("3@ZN2@PDxLBEq#AH7wMAf%ij$U59U%Tg"))
+	store := cookie.NewStore([]byte("3@ZN2@PDxLBEq#AH7wMAf%ij$U59U%Tg"))
 	routes.Use(sessions.Sessions("catch-up-session", store))
 
 	routes.GET("/", env.getIndex)
