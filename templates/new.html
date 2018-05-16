@@ -3,12 +3,40 @@
 <!--Embed the header.html template at this location-->
 {{ template "header.html" .}}
 
+<script>
+    $( function() {
+    var dateFormat = "dd/mm/yy",
+        endDay = $( "#endDay" ).datepicker({
+            dateFormat: dateFormat,
+            minDate: 0
+        }).on( "change", function() {
+            startDay.datepicker( "option", "maxDate", getDate( this ) );
+        }),
+        startDay = $( "#startDay" ).datepicker({
+            dateFormat: dateFormat,
+            minDate: 0
+        }).on( "change", function() {
+            endDay.datepicker( "option", "minDate", getDate( this ) );
+        });
+    function getDate( element ) {
+        var date;
+        try {
+            date = $.datepicker.parseDate( dateFormat, element.value );
+        } catch( error ) {
+            date = null;
+        }
+        return date;
+    }
+    } );
+</script>
+
     <h1>New Catch-up</h1>
 
         <form action="/new" method="POST">
             <li>Name: <input type="text" name="name" value="{{ .name }}"></li>
-            <li>Start day: <input type="text" name="startDay" value="{{ .startDay }}"></li>
-            <li>End day: <input type="text" name="endDay" value="{{ .endDay }}"></li>
+            <li>Details: <input type="text" name="details" value="{{ .details }}"></li>
+            <li>Start day: <input type="text" name="start_day" id="startDay" value="{{ .startDay }}"></li>
+            <li>End day: <input type="text" name="end_day" id="endDay" value="{{ .endDay }}"></li>
             <input type="submit">
         </form>
 <!--Embed the footer.html template at this location-->
