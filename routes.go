@@ -18,9 +18,6 @@ type Env struct {
 }
 
 func (env *Env) getIndex(c *gin.Context) {
-	session := sessions.Default(c)
-	session.Set("count", 1)
-	session.Save()
 	c.HTML(
 		http.StatusOK,
 		"index.html",
@@ -29,6 +26,9 @@ func (env *Env) getIndex(c *gin.Context) {
 }
 
 func (env *Env) getNew(c *gin.Context) {
+	session := sessions.Default(c)
+	session.Set("count", 1)
+	session.Save()
 	c.HTML(
 		http.StatusOK,
 		"new.html",
