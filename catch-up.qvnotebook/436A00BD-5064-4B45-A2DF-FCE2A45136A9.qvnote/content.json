@@ -39,6 +39,11 @@
     {
       "type": "code",
       "language": "sh",
+      "data": "# Install validation lib\ngo get gopkg.in/go-playground/validator.v8"
+    },
+    {
+      "type": "code",
+      "language": "sh",
       "data": "# Grab the mysql 5.7 image.\ndocker pull mysql:5.7"
     },
     {
