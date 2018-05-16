@@ -5,8 +5,12 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	_ "github.com/go-sql-driver/mysql"
+	"gopkg.in/go-playground/validator.v8"
 	"net/http"
+	"reflect"
+	"time"
 )
 
 type Env struct {
@@ -34,9 +38,34 @@ func (env *Env) getNew(c *gin.Context) {
 	)
 }
 
-func (env *Env) postNew(c *gin.Context) {
-	log.Info("Got DB handle", "db", env.db)
+type CatchUp struct {
+	Name     string    `form:"name" binding:"required"`
+	Details  string    `form:"details"`
+	StartDay time.Time `form:"start_day" binding:"required,futuredate" time_format:"02/01/2006"`
+	EndDay   time.Time `form:"end_day" binding:"required,gtfield=StartDay" time_format:"02/01/2006"`
+}
 
+func futureDate(
+	v *validator.Validate, topStruct reflect.Value, currentStructOrField reflect.Value,
+	field reflect.Value, fieldType reflect.Type, fieldKind reflect.Kind, param string,
+) bool {
+	if date, ok := field.Interface().(time.Time); ok {
+		today := time.Now()
+		if today.Year() > date.Year() || today.YearDay() > date.YearDay() {
+			return false
+		}
+	}
+	return true
+}
+
+func (env *Env) postNew(c *gin.Context) {
+
+	var cu CatchUp
+	if err := c.ShouldBind(&cu); err == nil {
+		c.JSON(http.StatusOK, gin.H{"message": "Booking dates are valid!"})
+	} else {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
 }
 
 func (env *Env) getEdit(c *gin.Context)  {}
@@ -53,6 +82,10 @@ func setupRoutes(db *sql.DB) *gin.Engine {
 
 	store := cookie.NewStore([]byte("3@ZN2@PDxLBEq#AH7wMAf%ij$U59U%Tg"))
 	routes.Use(sessions.Sessions("catch-up-session", store))
+
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("futuredate", futureDate)
+	}
 
 	routes.GET("/", env.getIndex)
 	routes.GET("/new", env.getNew)
