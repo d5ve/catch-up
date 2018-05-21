@@ -4,7 +4,7 @@
     {
       "type": "code",
       "language": "sh",
-      "data": "# Install dep dependeny versioning tool\ncurl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh\ndep init\n\n# Istall gin-gonic\ngo get github.com/gin-gonic/gin"
+      "data": "# Install dep dependeny versioning tool\n# https://golang.github.io/dep/docs/introduction.html\ncurl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh\ndep init -v\ndep ensure\ndep status\n\n# Istall gin-gonic\ngo get github.com/gin-gonic/gin"
     },
     {
       "type": "code",
