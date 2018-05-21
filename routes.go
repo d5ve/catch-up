@@ -62,7 +62,7 @@ func (env *Env) postNew(c *gin.Context) {
 
 	var cu CatchUp
 	if err := c.ShouldBind(&cu); err == nil {
-		c.JSON(http.StatusOK, gin.H{"message": "Booking dates are valid!"})
+		c.JSON(http.StatusOK, gin.H{"message": "CatchUp dates are valid!"})
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
