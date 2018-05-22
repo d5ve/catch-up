@@ -48,15 +48,9 @@ type Context struct {
 	handlers HandlersChain
 	index    int8
 
-	engine *Engine
-
-	// Keys is a key/value pair exclusively for the context of each request
-	Keys map[string]interface{}
-
-	// Errors is a list of errors attached to all the handlers/middlewares who used this context
-	Errors errorMsgs
-
-	// Accepted defines a list of manually accepted formats for content negotiation
+	engine   *Engine
+	Keys     map[string]interface{}
+	Errors   errorMsgs
 	Accepted []string
 }
 
@@ -151,15 +145,11 @@ func (c *Context) AbortWithError(code int, err error) *Error {
 /********* ERROR MANAGEMENT *********/
 /************************************/
 
-// Error attaches an error to the current context. The error is pushed to a list of errors.
+// Attaches an error to the current context. The error is pushed to a list of errors.
 // It's a good idea to call Error for each error that occurred during the resolution of a request.
 // A middleware can be used to collect all the errors
 // and push them to a database together, print a log, or append it in the HTTP response.
-// Error will panic if err is nil.
 func (c *Context) Error(err error) *Error {
-	if err == nil {
-		panic("err is nil")
-	}
 	var parsedError *Error
 	switch err.(type) {
 	case *Error:
@@ -562,7 +552,15 @@ func (c *Context) GetRawData() ([]byte, error) {
 	return ioutil.ReadAll(c.Request.Body)
 }
 
-func (c *Context) SetCookie(name, value string, maxAge int, path, domain string, secure, httpOnly bool) {
+func (c *Context) SetCookie(
+	name string,
+	value string,
+	maxAge int,
+	path string,
+	domain string,
+	secure bool,
+	httpOnly bool,
+) {
 	if path == "" {
 		path = "/"
 	}
@@ -614,13 +612,6 @@ func (c *Context) HTML(code int, name string, obj interface{}) {
 // more CPU and bandwidth consuming. Use Context.JSON() instead.
 func (c *Context) IndentedJSON(code int, obj interface{}) {
 	c.Render(code, render.IndentedJSON{Data: obj})
-}
-
-// SecureJSON serializes the given struct as Secure JSON into the response body.
-// Default prepends "while(1)," to response body if the given struct is array values.
-// It also sets the Content-Type as "application/json".
-func (c *Context) SecureJSON(code int, obj interface{}) {
-	c.Render(code, render.SecureJSON{Prefix: c.engine.secureJsonPrefix, Data: obj})
 }
 
 // JSON serializes the given struct as JSON into the response body.

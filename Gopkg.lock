@@ -8,7 +8,7 @@
     ".",
     "internal/cp"
   ]
-  revision = "2a595fd594c692e342042970520d2041a1604248"
+  revision = "c4e5513e46d427e67707ab54c97990301fb56c10"
 
 [[projects]]
   name = "github.com/fsnotify/fsnotify"
@@ -38,7 +38,8 @@
     "binding",
     "render"
   ]
-  revision = "87fdff8f88e22722ce258ebb46e5285341ebe523"
+  revision = "d459835d2b077e44f7c9b453505ee29881d5d12d"
+  version = "v1.2"
 
 [[projects]]
   name = "github.com/go-sql-driver/mysql"
@@ -55,7 +56,8 @@
 [[projects]]
   name = "github.com/golang/protobuf"
   packages = ["proto"]
-  revision = "5a0f697c9ed9d68fef0116532c6e05cfeae00e55"
+  revision = "b4deda0973fb4c70b50d226b1af49f3da59f5265"
+  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/gorilla/context"
@@ -72,7 +74,8 @@
 [[projects]]
   name = "github.com/gorilla/sessions"
   packages = ["."]
-  revision = "ba78acc856fe7c79891d516131b3d903cc8d9367"
+  revision = "ca9ada44574153444b00d3fd9c8559e4cc95f896"
+  version = "v1.1"
 
 [[projects]]
   branch = "master"
@@ -90,11 +93,6 @@
     "json/token"
   ]
   revision = "ef8a98b0bbce4a65b5aa4c368430a80ddc533168"
-
-[[projects]]
-  name = "github.com/json-iterator/go"
-  packages = ["."]
-  revision = "37ba1b32b5ed52dfaff0fe50d923d210c11c8daf"
 
 [[projects]]
   name = "github.com/kat-co/vala"
@@ -195,7 +193,8 @@
 [[projects]]
   name = "github.com/ugorji/go"
   packages = ["codec"]
-  revision = "c88ee250d0221a57af388746f5cf03768c21d6e2"
+  revision = "b4c50a2b199d93b13dc15e78929cfb23bfdf21ab"
+  version = "v1.1.1"
 
 [[projects]]
   branch = "master"
@@ -246,8 +245,8 @@
 [[projects]]
   name = "gopkg.in/go-playground/validator.v8"
   packages = ["."]
-  revision = "5f57d2222ad794d0dffb07e664ea05e2ee07d60c"
-  version = "v8.18.1"
+  revision = "5f1438d3fca68893a817e4a66806cea46a9e4ebf"
+  version = "v8.18.2"
 
 [[projects]]
   name = "gopkg.in/inconshreveable/log15.v2"
